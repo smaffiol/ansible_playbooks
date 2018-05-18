@@ -1,0 +1,39 @@
+- name: Create a new data volume
+  os_volume:
+    state: present
+    size: "{{ volume_size_gb }}"
+    display_name: "{{ volume_name }}"
+    wait: yes
+  when: 'volume_size_gb is defined and volume_size_gb|int > 0'
+
+- name: 'start {{ vm_name }} instance'
+  os_server:
+     name: "{{ vm_name }}"
+     state: present
+     image: "{{ vm_image_id|default('Ubuntu 16.04') }}"
+     key_name: "{{ vm_keypair }}"
+     flavor: "{{ vm_flavor|default('4cpu-16ram-hpc') }}"
+     volumes: "{{ volume_name }}"
+     nics: '[ {% for net in vm_networks %}"net-id={{ net }}"{{ "," if not loop.last else "" }}{% endfor %} ]'
+     security_groups: "{{ vm_security_groups|default(['default']) }}"
+  register: server_details
+
+- name: gather VM facts
+  os_server_facts:
+    server: "{{ vm_name }}"
+    detailed: yes
+
+# - name: Export servers variable info
+#   local_action: copy content="sc-server: {{ openstack_servers }}" dest=conf/sc-server.yml
+
+- name: Add VM to inventory
+  add_host:
+     groups: bb_tumorprofiler
+     hostname: "{{ openstack_servers[0]['accessIPv4'] }}"
+     ansible_host: bb_tumorprofiler
+     ansible_ssh_host: "{{ openstack_servers[0]['accessIPv4'] }}"
+     ansible_ssh_user: "{{ vm_login }}"
+     ansible_user: "{{ vm_login }}"
+     host_key_checking: False
+     hostfile: /dev/null
+

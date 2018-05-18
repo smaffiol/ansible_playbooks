@@ -1,0 +1,49 @@
+- name: Ensure apt-daily is *not* running
+  script: |
+    no-update-on-reboot.sh
+
+- name: Install required packages (Ubuntu)
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+     - build-essential
+     - gfortran
+     - python-pip
+     - python-dev
+     - libblas-dev
+     - liblapack-dev
+     - ccrypt
+     - cifs-utils
+     - swapspace
+     - libxml2-dev
+     - build-essential
+     - libfftw3-3
+     - libcurl4-openssl-dev
+     - libssl-dev
+
+- name: install pip modules
+  pip: name=docker-py
+
+# - name: Install docker
+#   command: "{{ item }}"
+#   become: yes
+#   with_items:
+#     - "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -"
+#     - "add-apt-repository 'deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable'"
+#     - "apt-get update"
+#     - "apt-get install -y docker-ce"
+
+- name: allow ssh password
+  lineinfile: dest={{ item.dest }} regexp={{ item.regexp }} line={{ item.line }}
+  with_items:
+    - { dest: '/etc/ssh/sshd_config', regexp: '^PasswordAuthentication no', line: 'PasswordAuthentication yes' }
+
+- name: 'create {{ data_path }} folder'
+  file: path={{ data_path }} state=directory owner={{ data_owner }}
+
+- name: Create a ext4 filesystem on {{ mount_point }} and check disk blocks
+  filesystem:
+    fstype=ext4
+    dev={{ mount_point }}
+
+- name: mount volume
+  mount: state=mounted src={{ mount_point }} path={{ data_path }} fstype=ext4

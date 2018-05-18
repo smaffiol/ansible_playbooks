@@ -1,0 +1,36 @@
+- name: Install dependecies
+  apt: name={{ item }} state=present update-cache=yes
+  become: yes
+  with_items:
+    - r-base
+    - gdebi-core
+    - libapparmor1
+
+- name: Determine RStudio 'current version'
+  command: curl {{ rstudio_current_version_url }}
+  when: "rstudio_version == 'latest'"
+  register: rstudio_latest
+
+- set_fact: rstudio_version={{ rstudio_latest.stdout }}
+  when: "rstudio_version == 'latest'"
+
+- name: Download Rstudio Server
+  get_url: url='http://download2.rstudio.org/rstudio-server-{{ rstudio_version }}-amd64.deb' dest={{ rstudio_download_dir }}
+
+- name: Install RStudio Server package
+  command: chdir={{ rstudio_download_dir }} gdebi -n rstudio-server-{{ rstudio_version }}-amd64.deb
+  become: yes
+
+- name: Customize RStudio configuration 
+  lineinfile: dest={{ item.dest }} line={{ item.line }}
+  with_items:
+     - { dest: '/etc/rstudio/rsession.conf', line: 'r-cran-repos=http://stat.ethz.ch/CRAN/' }
+  become: yes
+
+- name: Restart RStudio service
+  service: name=rstudio-server state=started
+  become: yes
+
+- name: Clean-up
+  file: path={{ rstudio_download_dir }}/rstudio-server-{{ rstudio_version }}-amd64.deb state=absent
+  become: yes

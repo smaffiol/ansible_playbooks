@@ -1,0 +1,3 @@
+- name: pull CellProfiler docker image
+  docker_image: name={{ cp_docker }}
+  become: yes

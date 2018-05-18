@@ -1,0 +1,27 @@
+---
+- name: Create BBlab TumorProfiler node
+  hosts: localhost
+  vars_files:
+    - conf/config.yml
+  roles:
+    - provider
+
+- name: Configure BBlab TumorProfiler node
+  hosts: bb_tumorprofiler
+  vars_files:
+    - conf/config.yml
+  vars:
+    data_path: "{{ data_path }}"
+    data_owner: "{{ vm_login }}"
+    mount_point: "{{ hostvars['localhost']['openstack_servers'][0]['volumes'][0]['device'] }}"
+  roles:
+    - { role: common, become: yes }
+
+- name: Install applications and services
+  hosts: bb_tumorprofiler
+  vars_files:
+    - conf/rstudio.yml
+    - conf/dockers.yml
+  roles:
+    - rstudio
+    - cellprofiler
