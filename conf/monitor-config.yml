@@ -1,0 +1,20 @@
+---
+# global config
+# vm specific params
+volume_size_gb: 100
+volume_name: monitor
+vm_name: monitor
+vm_image_id: 81acb4fd-ae1a-4941-8816-2fc798f1b933
+vm_flavor: 1cpu-4ram-hpc
+vm_networks: ["c86b320c-9542-4032-a951-c8a068894cc2", "7979559b-44d2-4abd-a2b6-6c9da60781b2"]
+# vm_networks: ["c86b320c-9542-4032-a951-c8a068894cc2", "281ab00c-121d-4398-9637-362050e885bd"]
+vm_keypair: "smaffi_rsa"
+vm_login: ubuntu
+vm_security_groups: ["default", "monitoring"]
+inventory_hostname: bb_monitor
+monitor_site_name: bblab
+monitor_admin_email: it-bblab@imls.uzh.ch
+
+# mount points
+data_path: '/data'
+user_file: 'users.csv'
