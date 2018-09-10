@@ -1,0 +1,13 @@
+---
+
+- name: Boh
+  host: bbclient
+  command: hostname
+
+- name: Mah
+  host: bbserver
+  command: time
+
+#- name: test variable
+#  debug:
+#    var={{ mount_device }}

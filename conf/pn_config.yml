@@ -1,0 +1,17 @@
+---
+# vm specific params
+volume_size_gb: 100
+volume_name: processing_node
+vm_name: pn_node
+vm_image_id: 81acb4fd-ae1a-4941-8816-2fc798f1b933
+vm_flavor: 4cpu-16ram-hpc
+vm_networks: ['c86b320c-9542-4032-a951-c8a068894cc2', '7979559b-44d2-4abd-a2b6-6c9da60781b2']
+vm_keypair: smaffi_rsa
+vm_login: ubuntu
+vm_security_groups: ['default']
+inventory_hostname:  bb_processing
+pn_user: '{{ vm_login }}'
+pn_groups: '{{ vm_login }}'
+
+# Apps specs
+bbRtools_git_repo: 'https://github.com/BodenmillerGroup/bbRtools.git'

@@ -1,0 +1,19 @@
+- name: Install check-mk-raw package
+  apt:
+    deb: "{{ checkmk_package }}"
+
+- name: create BBlab OMD site
+  command: omd create {{ monitor_site_name }}
+
+- name: configuration
+  command: omd config bblab set {{ item.var }} {{ item.val }}
+  with_items:
+    - { var: "APACHE_TCP_ADDR", val: "{{ hostvars['localhost']['openstack_servers'][0]['accessIPv4'] }}" }
+    - { var: "ADMIN_MAIL", val: "{{ monitor_admin_email }}" }
+
+- name: set access credentials
+  command: sudo -u {{ monitor_site_name }} htpasswd -bm ~{{ monitor_site_name }}/etc/htpasswd cmkadmin {{ checkmk_password }}
+  become: yes
+
+- name: start OMD service
+  command: omd start {{ monitor_site_name }}

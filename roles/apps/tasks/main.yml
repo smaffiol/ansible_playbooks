@@ -1,0 +1,10 @@
+- name: "create {{ apps_path }} folder"
+  file:
+    path={{ item }}
+    state=directory
+    owner={{ apps_owner }}
+    group={{ apps_owner }}
+  with_items:
+    - "{{ apps_path }}"
+    - "{{ apps_path }}/bin"
+

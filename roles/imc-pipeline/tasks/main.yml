@@ -1,0 +1,28 @@
+- name: checkout IMC tools
+  git:
+    repo={{ imc_tools }}
+    dest={{ apps_path }}/imctools/
+    version={{ imc_tools_release }}
+
+- name: install IMC tools
+  pip:
+    requirements={{ apps_path }}/imctools/requirements.txt
+    executable={{ pip_exec_path }}
+
+- name: fix ownership
+  file:
+    path={{ apps_path }}/imctools/
+    owner={{ apps_owner }}
+    group={{ apps_owner }}
+    state=directory
+    recurse=yes
+
+- name: fix PYTHONPATH
+  lineinfile: dest=/home/{{ apps_owner }}/.bashrc line="export PYTHONPATH={{ apps_path }}/imctools/imctools:$PYTHONPATH"
+
+# - name: checkout IMC pipeline
+#   git:
+#     repo={{ imc_pipeline }}
+#     dest={{ apps_path }}/imc-pipeline/
+#     version={{ imc_pipeline_release }}
+

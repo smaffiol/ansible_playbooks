@@ -23,14 +23,14 @@
     server: "{{ vm_name }}"
     detailed: yes
 
-# - name: Export servers variable info
-#   local_action: copy content="sc-server: {{ openstack_servers }}" dest=conf/sc-server.yml
+- name: add small ltimeout to allow SSH service to start
+  pause: seconds=30
 
 - name: Add VM to inventory
   add_host:
-     groups: bb_tumorprofiler
+     groups: "{{ inventory_hostname }}"
      hostname: "{{ openstack_servers[0]['accessIPv4'] }}"
-     ansible_host: bb_tumorprofiler
+     ansible_host: "{{ inventory_hostname }}"
      ansible_ssh_host: "{{ openstack_servers[0]['accessIPv4'] }}"
      ansible_ssh_user: "{{ vm_login }}"
      ansible_user: "{{ vm_login }}"

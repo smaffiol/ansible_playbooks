@@ -1,3 +1,17 @@
 - name: pull CellProfiler docker image
-  docker_image: name={{ cp_docker }}
+  docker_image: name={{ item }}
   become: yes
+  with_items:
+    - "{{ cp2_docker }}"
+    - "{{ cp3_docker }}"
+
+- name: Deploy execution scripts
+  template:
+    dest={{ apps_path }}/{{item}}
+    src={{item}}.j2
+    mode=0755
+    owner={{ data_owner }}
+    group={{ data_owner }}
+  with_items:
+    - 'bin/cp2.sh'
+    - 'bin/cp3.sh'

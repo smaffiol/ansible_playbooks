@@ -1,0 +1,29 @@
+---
+- name: Create BBlab Processing node
+  hosts: localhost
+  vars_files:
+    - conf/pn_config.yml
+  roles:
+    - provider
+
+- name: Configure BBlab Processing node
+  hosts: bb_processing
+  vars_files:
+    - conf/main.yml
+    - conf/pn_config.yml
+  vars:
+    data_owner: "{{ pn_user }}"
+    apps_owner: "{{ pn_user }}"
+    mount_point: "{{ hostvars['localhost']['openstack_servers'][0]['volumes'][0]['device'] }}"
+    pip_exec_path: "/opt/anaconda{{anaconda_python_version}}/bin/pip"
+  roles:
+    - { role: common, become: yes }
+    - { role: apps, become: yes }
+    - { role: anaconda, become: yes }
+    - { role: jupyterhub, become: yes }
+    - { role: rstudio, become: yes }
+    - { role: cellprofiler, become: yes }
+    - { role: ilastik, become: yes }
+    - { role: imc-pipeline, become: yes }
+    - { role: smc-pipeline, become: yes }
+    - { role: processing, become: yes }

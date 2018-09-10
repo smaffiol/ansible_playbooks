@@ -1,0 +1,13 @@
+# Stage ldap server docker image
+- name: Run LDAP server in Docker container
+  docker_container:
+    name=docker-ldap-server
+    image={{ docker-ldap-server }}
+    state=started
+    log_driver=syslog
+    volumes=/etc/ldap_server
+    ports="{{ internal_network }}:{{ ldap_port }}"
+
+	
+
+    

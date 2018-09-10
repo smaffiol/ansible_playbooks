@@ -1,0 +1,20 @@
+---
+- name: Create BBlab Monitor node
+  hosts: localhost
+  vars_files:
+    - conf/main.yml
+    - conf/monitor-config.yml
+  roles:
+    - provider
+
+- name: Configure BBlab Monitor node
+  hosts: bb_monitor
+  vars_files:
+    - conf/main.yml
+    - conf/monitor-config.yml
+  vars:
+    data_owner: "{{ vm_login }}"
+    mount_point: "{{ hostvars['localhost']['openstack_servers'][0]['volumes'][0]['device'] }}"
+  roles:
+    - { role: common, become: yes }
+    - { role: checkmk, become: yes }

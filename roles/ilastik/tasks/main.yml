@@ -1,3 +1,22 @@
-- name: pull CellProfiler docker image
-  docker_image: name={{ cp_docker }}
-  become: yes
+- name: prepare Ilastik fodler
+  file:
+    path={{ apps_path }}/ilastik
+    state=directory
+    mode=0755
+    owner={{ apps_owner }}
+    group={{ apps_owner }}
+
+- name: Install Ilastik
+  unarchive:
+    src={{ ilk_pkg }}
+    dest={{ apps_path }}/ilastik
+    remote_src=yes
+    creates=yes
+
+- name: add ilastik to path
+  lineinfile: >
+    dest=/etc/environment
+    state=present
+    backrefs=yes
+    regexp='PATH=(["]*)((?!.*?{{ apps_path }}/ilastik/bin).*?)(["]*)$'
+    line="PATH=\1\2:{{ apps_path }}/ilastik/bin\3"

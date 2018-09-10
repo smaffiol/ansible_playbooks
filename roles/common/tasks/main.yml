@@ -20,22 +20,31 @@
      - libcurl4-openssl-dev
      - libssl-dev
 
-- name: install pip modules
-  pip: name=docker-py
+- name: Install docker
+  command: "{{ item }}"
+  become: yes
+  with_items:
+     - "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -"
+     - "add-apt-repository 'deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable'"
+     - "apt-get update"
+     - "apt-get install -y docker-ce"
+  when: '"{{ common_install_docker }}" = "True"'
 
-# - name: Install docker
-#   command: "{{ item }}"
-#   become: yes
-#   with_items:
-#     - "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -"
-#     - "add-apt-repository 'deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable'"
-#     - "apt-get update"
-#     - "apt-get install -y docker-ce"
 
 - name: allow ssh password
   lineinfile: dest={{ item.dest }} regexp={{ item.regexp }} line={{ item.line }}
   with_items:
     - { dest: '/etc/ssh/sshd_config', regexp: '^PasswordAuthentication no', line: 'PasswordAuthentication yes' }
+
+# - name: Link with LDAP server
+
+- name: update user account
+  user:
+    name={{ data_owner }}
+    shell=/bin/bash
+    append=yes
+    groups={{ data_owner }}
+    password=$6$NbEQeJBumuy$UuDCROFnj7gcb6bhrp2VR.dzPY2CKJkeR/cYsUwSw5X/ljJ5ZrAbM8CX26MsZHXD1GXjtwK8miuSDSOZc1gt9/
 
 - name: 'create {{ data_path }} folder'
   file: path={{ data_path }} state=directory owner={{ data_owner }}
@@ -47,3 +56,18 @@
 
 - name: mount volume
   mount: state=mounted src={{ mount_point }} path={{ data_path }} fstype=ext4
+
+- name: Fix ownership
+  file:
+    path={{ data_path }}
+    state=directory
+    owner={{ data_owner }}
+    recurse=yes
+
+- name: unlimit stack size
+  pam_limits:
+    domain: {{ data_owner }}
+    limit_type: '-'
+    limit_item: stack
+    value: unlimited
+    comment: unlimited stack size

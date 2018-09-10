@@ -1,6 +1,16 @@
+- name: Add cran35 repo to apt list
+  apt_repository:
+    repo="deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran35/"
+    state=present
+
+- name: Add an apt key by id from a keyserver
+  apt_key:
+    keyserver=keyserver.ubuntu.com
+    id=E084DAB9
+    state=present
+
 - name: Install dependecies
-  apt: name={{ item }} state=present update-cache=yes
-  become: yes
+  apt: name={{ item }} state=latest update-cache=yes
   with_items:
     - r-base
     - gdebi-core
@@ -19,18 +29,14 @@
 
 - name: Install RStudio Server package
   command: chdir={{ rstudio_download_dir }} gdebi -n rstudio-server-{{ rstudio_version }}-amd64.deb
-  become: yes
 
 - name: Customize RStudio configuration 
   lineinfile: dest={{ item.dest }} line={{ item.line }}
   with_items:
      - { dest: '/etc/rstudio/rsession.conf', line: 'r-cran-repos=http://stat.ethz.ch/CRAN/' }
-  become: yes
 
 - name: Restart RStudio service
   service: name=rstudio-server state=started
-  become: yes
 
 - name: Clean-up
   file: path={{ rstudio_download_dir }}/rstudio-server-{{ rstudio_version }}-amd64.deb state=absent
-  become: yes
