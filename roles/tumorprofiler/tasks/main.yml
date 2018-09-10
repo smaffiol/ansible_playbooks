@@ -1,0 +1,104 @@
+- name: Ensure apt-daily is *not* running
+  script: |
+    no-update-on-reboot.sh
+  become: yes
+
+- name: add CRAN R repository
+  command: apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
+  become: yes
+
+- name: add R repo
+  apt_repository:
+    repo=deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran35/
+    state=present
+
+- name: add GCC7 repo
+  apt_repository:
+    repo=deb ppa:jonathonf/gcc-7.1 xenial/
+    state=present
+
+- name: Install required packages (Ubuntu)
+  apt: name={{ item }} state=present update_cache=yes
+  become: yes
+  with_items:
+     - build-essential
+     - gcc-7
+     - g++-7
+     - libtiff-dev
+     - libtiff
+     - libfftw3
+     - libfftw3-dev
+     - libgfortran4
+     - gfortran
+     - python-pip
+     - python-dev
+     - libblas-dev
+     - liblapack-dev
+     - ccrypt
+     - cifs-utils
+     - swapspace
+     - libxml2-dev
+     - libgfortran4
+     - libfftw3-3
+     - libcurl4-openssl-dev
+     - libssl-dev
+     - r-base
+     - r-base-dev
+     - r-cran-nloptr
+
+- name: Install docker
+  command: "{{ item }}"
+  with_items:
+    - "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -"
+    - "sudo add-apt-repository 'deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable'"
+    - "sudo apt-get update"
+    - "sudo apt-get install -y docker-ce"
+
+- name: allow ssh password
+  lineinfile: dest={{ item.dest }} regexp={{ item.regexp }} line={{ item.line }}
+  become: yes
+  with_items:
+    - { dest: '/etc/ssh/sshd_config', regexp: '^PasswordAuthentication no', line: 'PasswordAuthentication yes' }
+
+- name: create data folder
+  file: path={{ data_path }} state=directory  
+
+- name: mount volume
+  mount: state=mounted src={{ mount_point }} path={{ data_path }} fstype=ext4
+
+- name: install Bioconductor
+  command: source("https://bioconductor.org/biocLite.R")
+
+- name: deploy bbRtools package
+  git:
+    repo='{{ bbRtools_git_repo }}'
+    dest={{ apps_path }}/bbRtools
+
+- name: install R packages
+  command: biocLie('{ item }')
+  with_items:
+    - devtools
+    - data.table
+    - Rtsne
+    - threejs
+    - RColorBrewer
+    - destiny
+    - dplyr
+    - dtplyr
+    - gplots
+    - cba
+    - gplots
+    - ggplot2
+    - plotly
+    - Biobase
+    - CATALYST
+    - flowSOM
+    - openCyto
+    - devtools
+    - Rtsne
+    - cytofkit
+    - ggcyto
+    - flowWorkspaceData
+
+- name: install bbRtools
+  command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "library(devtools);install_git('{{ apps_path }}/bbRtools/.git')"

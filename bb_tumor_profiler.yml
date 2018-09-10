@@ -2,26 +2,27 @@
 - name: Create BBlab TumorProfiler node
   hosts: localhost
   vars_files:
-    - conf/config.yml
+    - conf/tp_config.yml
   roles:
     - provider
 
 - name: Configure BBlab TumorProfiler node
   hosts: bb_tumorprofiler
   vars_files:
-    - conf/config.yml
+    - conf/main.yml
+    - conf/tp_config.yml
   vars:
-    data_path: "{{ data_path }}"
-    data_owner: "{{ vm_login }}"
+    data_owner: "{{ tp_user }}"
+    apps_owner: "{{ tp_user }}"
     mount_point: "{{ hostvars['localhost']['openstack_servers'][0]['volumes'][0]['device'] }}"
+    pip_exec_path: "/opt/anaconda{{anaconda_python_version}}/bin/pip"
   roles:
     - { role: common, become: yes }
-
-- name: Install applications and services
-  hosts: bb_tumorprofiler
-  vars_files:
-    - conf/rstudio.yml
-    - conf/dockers.yml
-  roles:
-    - rstudio
-    - cellprofiler
+    - { role: apps, become: yes }
+    - { role: anaconda, become: yes }
+    - { role: jupyterhub, become: yes }
+    - { role: rstudio, become: yes }
+    - { role: cellprofiler, become: yes }
+    - { role: ilastik, become: yes }
+    - { role: imc-pipeline, become: yes }
+    
