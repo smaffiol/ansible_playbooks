@@ -19,6 +19,8 @@
   roles:
     - { role: common, become: yes }
     - { role: apps, become: yes }
+    - { role: tumorprofiler, become: yes }
+    - { role: tp_data_monitor, become: yes }
     - { role: anaconda, become: yes }
     - { role: jupyterhub, become: yes }
     - { role: rstudio, become: yes }

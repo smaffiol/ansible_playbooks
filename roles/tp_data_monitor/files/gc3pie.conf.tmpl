@@ -1,0 +1,18 @@
+[DEFAULT]
+debug = 0
+
+[auth/noauth]
+type=none
+
+[resource/localhost]
+enabled=yes
+type=shellcmd
+auth=noauth
+transport=local
+max_cores=4
+max_cores_per_job=1
+max_memory_per_core=16 GB
+max_walltime=2000 hours
+architecture=x64_64
+override = yes
+spooldir=/var/tmp/gc3pie_jobs

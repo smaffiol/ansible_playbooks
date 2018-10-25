@@ -1,0 +1,17 @@
+- name: install GC3Pie
+  get_url:
+    url: {{ gc3pie_install_script }}
+    dest: {{ vm_login }}/install.py
+    mode: 0750
+- name: install GC3Pie in development mode
+  command: python {{ vm_login }}./install.py --develop -y --no-gc3apps -a openstack
+- name: Configure GC3Pie virtualenv
+  lineinfile: dest={{ item.dest }} line={{ item.line }}
+  with_items:
+      - { dest: '$HOME/.bashrc', line: 'source $HOME/gc3pie/bin/activate' }
+- name: Deploying config file
+  copy: 
+    src: gc3pie.conf.tmlp
+    dest: $HOME/.gc3/gc3pie.conf
+    owner: {{ vm_login }}
+    mode: 0644
