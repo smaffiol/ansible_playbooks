@@ -3,8 +3,6 @@
     path={{ apps_path }}/ilastik
     state=directory
     mode=0755
-    owner={{ apps_owner }}
-    group={{ apps_owner }}
 
 - name: Install Ilastik
   unarchive:
@@ -19,4 +17,4 @@
     state=present
     backrefs=yes
     regexp='PATH=(["]*)((?!.*?{{ apps_path }}/ilastik/bin).*?)(["]*)$'
-    line="PATH=\1\2:{{ apps_path }}/ilastik/bin\3"
+    line="PATH=\1\2:{{ apps_path }}/ilastik/bin:{{ apps_path }}/ilastik\3"
