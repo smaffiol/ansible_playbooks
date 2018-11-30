@@ -10,8 +10,6 @@
     dest={{ apps_path }}/{{item}}
     src={{item}}.j2
     mode=0755
-    owner={{ data_owner }}
-    group={{ data_owner }}
   with_items:
     - 'bin/cp2.sh'
     - 'bin/cp3.sh'
