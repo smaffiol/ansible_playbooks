@@ -1,3 +1,7 @@
 ---
 data_path: '/data'
 apps_path: '/apps'
+bbvolume_path: '/data'
+bbvolume_mount_point: '/mnt/bbvolume'
+bbvolume: '10.65.12.13:{{bbvolume_mount_point}}'
+pip_exec_path: "/opt/anaconda{{anaconda_python_version}}/bin/pip"
