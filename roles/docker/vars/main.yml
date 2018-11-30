@@ -1,0 +1,9 @@
+system_docker_to_remove:
+  - docker
+  - docker-engine
+  - docker.io
+system_docker_packages_to_install:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - software-properties-common
