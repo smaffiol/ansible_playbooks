@@ -1,1 +1,11 @@
-common_install_docker = "False"
+data_path: "/data"
+apps_path: "/apps"
+common_install_docker: "False"
+swap_tmp_path: "/mnt/swap_tmp"
+gglist:
+ - {gname: 'bblab', gid: '1001'}
+ - {gname: 'operator', gid: '1002'}
+ - {gname: 'docker', gid: '1003'}
+usrlist:
+ - {'username': 'smaffi', 'passwd': '$6$Z4qGp4uj$2dHEy/jvRaUDY3xW8MOGLLVVR378PYigItA.cZxTfzqmX.cIDLol5pqGJYqaJskSvzCKIcoe0pokQ15tr5lLd1', 'groups': 'bblab', 'uid': '1040'}
+ - {'username': 'daniels', 'passwd': '$6$9LGdGJGk$LYLwrtxkZBXotFUwx/Bd/eM/wJS364BulAJDfvDqprQ5db1m/fo5ueqH2TrmQHsdPh1wsWZShcXlr3CjohlyY0','groups': 'bblab', 'uid': '1007'}
