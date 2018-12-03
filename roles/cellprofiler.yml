@@ -1,0 +1,6 @@
+---
+
+- name: Cellprofiler
+  hosts: analysis
+  roles:
+    - cellprofiler

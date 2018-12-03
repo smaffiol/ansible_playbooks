@@ -1,0 +1,6 @@
+---
+
+- name: Ilastik
+  hosts: analysis
+  roles:
+    - ilastik

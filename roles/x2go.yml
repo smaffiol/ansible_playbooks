@@ -1,0 +1,6 @@
+---
+
+- name: X2go
+  hosts: analysis
+  roles:
+    - debops-contrib.x2go_server

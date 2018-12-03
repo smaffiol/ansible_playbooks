@@ -42,6 +42,9 @@
      - r-base-dev
      - r-cran-nloptr
      - Rtsne.multicore
+     - libtiff-dev
+     - libfftw3-dev
+     
 
 # - name: Install docker
 #   command: "{{ item }}"
