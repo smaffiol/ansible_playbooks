@@ -27,6 +27,16 @@
 # - name: Install docker support (Ubuntu)
 #   when: 'common_install_docker'
 
+- name: "create {{ apps_path }} folder"
+  file:
+    path={{ item }}
+    state=directory
+  with_items:
+    - "{{ apps_path }}"
+    - "{{ apps_path }}/bin"
+    - "/export/homes"
+    - "/data"
+
 - name: allow ssh password
   lineinfile: dest={{ item.dest }} regexp={{ item.regexp }} line={{ item.line }}
   with_items:
@@ -43,17 +53,9 @@
   loop: '{{ gglist }}'
 
 - name: configure local users
-  user: name={{item.username}} password={{item.passwd}} generate_ssh_key=no groups={{item.groups}} shell=/bin/bash append=yes state=present uid={{item.uid}}
+  user: name={{item.username}} password={{item.passwd}} generate_ssh_key=no groups={{item.groups}} shell=/bin/bash append=yes state=present uid={{item.uid}} create_home=yes home=/export/home/{{item.username}}
   loop: '{{ usrlist }}'
   
 - name: unlimit stack size
   pam_limits: domain='*' limit_type='-' limit_item=stack value=unlimited comment='unlimited stack size'
-
-- name: "create {{ apps_path }} folder"
-  file:
-    path={{ item }}
-    state=directory
-  with_items:
-    - "{{ apps_path }}"
-    - "{{ apps_path }}/bin"
 

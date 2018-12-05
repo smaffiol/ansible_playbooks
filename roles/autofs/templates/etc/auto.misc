@@ -1,0 +1,14 @@
+# THIS FILE IS CONTROLLED BY ELASTICLUSTER
+# local modifications will be overwritten
+# the next time `elasticluster setup` is run!
+#
+
+# /etc/auto.master
+#
+# Master map for autofs(8); it is used to define mountpoints
+# managed by `autofs`, and the corresponding map file. When
+# changed, a HUP signal (`service autofs reload`) must be
+# sent to the `autofs` daemon. See `man 5 auto.master` for details.
+#
+
+/data {{autofs_data_server}}:{{autofs_data_export}}
