@@ -1,0 +1,7 @@
+---
+
+- name: deploy backup scripts
+  git:
+    repo: 'https://github.com/BodenmillerGroup/imctools.git'
+    dest: /srv/checkout
+    update: no
