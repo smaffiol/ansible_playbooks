@@ -2,6 +2,30 @@
 
 - name: deploy backup scripts
   git:
-    repo: 'https://github.com/BodenmillerGroup/imctools.git'
-    dest: /srv/checkout
-    update: no
+    repo: 'https://github.com/openstack/freezer.git'
+    dest: /opt/freezer
+    version: stable/ocata
+
+- name: Istall freezer required packages
+  packages:
+     name: {{item}}
+     state: present
+  loop:
+     - python-dev
+     - python-pip
+     - git
+     - openssl
+     - gcc
+     - make
+     - automake
+
+- name: Install requirements with pip
+  pip:
+   chdir: /opt/freezer
+   requirements: requirements.txt
+
+- name: Install freezer from source
+  shell: "sudo python setup.py install"
+  args:
+    chdir: /opt/freezer
+
