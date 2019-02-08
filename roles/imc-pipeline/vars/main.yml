@@ -2,3 +2,7 @@ imc_tools: https://github.com/BodenmillerGroup/imctools.git
 imc_tools_release: master
 imc_pipeline: https://github.com/BodenmillerGroup/imc_processing_example.git
 imc_pipeline_release: cp2-example
+imc-pipeline-items:
+  - { repo: 'https://github.com/BodenmillerGroup/imctools.git', release: 'master' }
+  - { repo: 'https://github.com/BodenmillerGroup/ImcSegmentationPipeline.git', release: 'master' }
+  - { repo: 'https://github.com/BodenmillerGroup/ImcPluginsCP.git', release: 'master' }

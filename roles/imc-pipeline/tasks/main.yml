@@ -1,8 +1,22 @@
+- name: install needed packages
+  - apt: status=present {{item}}
+  - with_items:
+// sudo pip3 install --upgrade pip
+// sudo npm install -g configurable-http-proxy
+// sudo pip3 install jupyterhub
+// sudo pip3 install notebook
+// sudo pip install daytime
+// sudo pip3 install daytime
+// sudo pip install encoding
+// sudo pip3 install encoding
+// sudo /usr/bin/python pip install virtualenvwrapper
+   
 - name: checkout IMC tools
   git:
-    repo={{ imc_tools }}
-    dest={{ apps_path }}/imctools/
-    version={{ imc_tools_release }}
+    repo: '{{item.repo}}'
+    dest: '{{ apps_path }}/imc/{{item.name}}'
+    version: '{{item.release}}'
+  loop: '{{imc-pipeline-items}}'
 
 - name: install IMC tools
   pip:

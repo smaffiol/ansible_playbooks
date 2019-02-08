@@ -53,7 +53,7 @@
   loop: '{{ gglist }}'
 
 - name: configure local users
-  user: name={{item.username}} password={{item.passwd}} generate_ssh_key=no groups={{item.groups}} shell=/bin/bash append=yes state=present uid={{item.uid}} create_home=yes home=/export/home/{{item.username}}
+  user: name={{item.username}} password={{item.passwd}} generate_ssh_key=no groups={{item.groups}} shell=/bin/bash append=yes state=present uid={{item.uid}} create_home=yes home=/export/homes/{{item.username}}
   loop: '{{ usrlist }}'
   
 - name: unlimit stack size

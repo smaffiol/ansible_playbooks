@@ -4,15 +4,29 @@
   with_items:
     - check-mk-agent
     - check-mk-config-nagios3
-    - xinetd
 
-- name: customise xinetd config
-  lineinfile: dest={{ item.dest }} regexp={{ item.regexp }} line={{ item.line }}
-  with_items:
-     - { dest: '/etc/xinetd.d/check_mk', regexp: '^"only_from"', line: 'only_from = 127.0.0.1 {{ check-mk_server }}' }
-     - { dest: '/etc/xinetd.d/check_mk', regexp: '^"disable"', line: 'disable = no' }
+- name: Check_MK dashboard -> Monitoring Agents -> systemd SOCKET definition file
+  file:
+    path: check_mk@.service
+    dest: /etc/systemd/system/check_mk@.service
+    owner: root
+    become_user: yes
 
-- name: Restart service httpd, in all cases
-  service:
-    name: xinetd
+- name: Configure ssh-agent for local user
+  file:
+    path: check_mk.socket
+    dest: /etc/systemd/system/check_mk.socket
+    owner: root
+    become_user: yes
+
+- name: enable check_mk.socket and ensure it is not masked
+  systemd:
+    name: check_mk.socket
+    enabled: yes
+    masked: no
+
+- name: restart check_mk.socket service
+  systemd:
     state: restarted
+    daemon_reload: yes
+    name: check_mk.socket

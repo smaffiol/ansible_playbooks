@@ -1,2 +1,4 @@
 cp2_docker: cellprofiler/cellprofiler:2.3.1
 cp3_docker: cellprofiler/cellprofiler
+data_path: "/data"
+plugins_path: "$HOME/.cellprofiler_plugins"
