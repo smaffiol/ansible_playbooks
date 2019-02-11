@@ -1,0 +1,23 @@
+--
+
+# Deploy BBlab accounts on an already running NIS server
+
+- name: Deploy BBlab accounts
+  copy:
+    dest: '/tmp/'
+    src: 'etc/{{item}}'
+    mode: 0600
+    owner: root
+  loop:
+    - passwd
+    - group
+    - shadow
+    - gshadow
+
+- name: set local accounts
+  command: cat /tmp/{{item}} >> /etc/{{item}}
+  loop:
+    - passwd
+    - group
+    - shadow
+    - gshadow
