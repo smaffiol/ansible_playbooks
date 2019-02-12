@@ -2,13 +2,13 @@
 
 - name: deploy backup scripts
   git:
-    repo: 'https://github.com/openstack/freezer.git'
+    repo: "https://github.com/openstack/freezer.git"
     dest: /opt/freezer
     version: stable/ocata
 
-- name: Istall freezer required packages
-  packages:
-     name: {{item}}
+- name: Install freezer required packages
+  package:
+     name: "{{ item }}"
      state: present
   loop:
      - python-dev

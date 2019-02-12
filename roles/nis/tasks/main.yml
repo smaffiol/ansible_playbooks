@@ -1,4 +1,4 @@
---
+---
 
 # Deploy BBlab accounts on an already running NIS server
 
@@ -15,9 +15,13 @@
     - gshadow
 
 - name: set local accounts
-  command: cat /tmp/{{item}} >> /etc/{{item}}
+  shell: cat /tmp/{{item}} >> /etc/{{item}}
   loop:
     - passwd
     - group
     - shadow
     - gshadow
+
+- name: update NIS database
+  make:
+    chdir: /var/yp
