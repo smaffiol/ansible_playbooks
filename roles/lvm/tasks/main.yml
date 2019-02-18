@@ -1,0 +1,16 @@
+- name: Create a logical volume 
+  lvol:
+    vg: '{{item.volgroup}}'
+    lv: '{{item.vname}}'
+    size: 100%VG
+    pvs: '{{item.devices}}'
+  loop: '{{LVM_VOLUMES}}'
+
+
+- name: creating new filesystem on new LVM logical volume
+  filesystem: fstype=ext4 dev=/dev/'{{item.volgroup}}'/'{{item.vname}}'
+  loop: '{{LVM_VOLUMES}}'
+
+- name: mounting new filesystem
+  mount: name={{item.mountpoint}} dev=/dev/'{{item.volgroup}}'/'{{item.vname}}' fstype=ext4 state=mounted
+  loop: '{{LVM_VOLUMES}}'
