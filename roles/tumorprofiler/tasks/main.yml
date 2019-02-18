@@ -102,17 +102,21 @@
     - ggcyto
     - flowWorkspaceData
     - tensorflow
+    - Radviz
+    - caret
+    - randomForest
+    - knitr
+    - splatter
+    - pheatmap
     
 - name: install tensorflow
   command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "install.packages("tensorflow");tensorflow::install_tensorflow()')"
-
 
 - name: install bbRtools
   command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "library(devtools);install_git('{{ apps_path }}/bbRtools/.git')"
 
 - name: install cellassign
   command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "library(devtools);install_git('Irrationone/cellassign')"
-
 
 - name: Configure ssh-agent for local user
   file:
