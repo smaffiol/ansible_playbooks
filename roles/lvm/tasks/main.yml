@@ -2,7 +2,7 @@
   lvg:
     vg: '{{item.volgroup}}'
     pvs: '{{item.devices}}'
-    state=present
+    state: present
   loop: '{{LVM_VOLUMES}}'
 
 - name: Create a logical volume 
