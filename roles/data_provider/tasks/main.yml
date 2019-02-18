@@ -1,0 +1,17 @@
+- name: Create a new data volume
+  os_volume:
+    state: present
+    size: '{{item.sizegb}}'
+    display_name: "{{item.name}}"
+    wait: yes
+  when: 'volume_size_gb is defined and volume_size_gb|int > 0'
+  loop: '{{volumes}}'
+
+# Attaches a volume to a compute host
+- name: attach a volume
+  os_server_volume:
+    state: present
+    server: '{{data_instance}}'
+    volume: '{{item.name}}'
+    device: '{{item.attach}}'
+  loop: '{{volumes}}'
