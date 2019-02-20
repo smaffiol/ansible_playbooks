@@ -1,7 +1,6 @@
 - name: creating new LVM volume group
   lvg:
     vg: '{{item.volgroup}}'
-    pvs: '{{item.devices}}'
     state: present
   loop: '{{LVM_VOLUMES}}'
 

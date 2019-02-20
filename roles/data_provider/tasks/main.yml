@@ -4,7 +4,6 @@
     size: '{{item.sizegb}}'
     display_name: "{{item.name}}"
     wait: yes
-  when: 'volume_size_gb is defined and volume_size_gb|int > 0'
   loop: '{{volumes}}'
 
 # Attaches a volume to a compute host

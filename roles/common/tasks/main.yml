@@ -3,8 +3,10 @@
     no-update-on-reboot.sh
 
 - name: Install required packages (Ubuntu)
-  apt: name={{ item }} state=present update_cache=yes
-  with_items:
+  package:
+    name: {{ item }}
+    state: present
+    loop:
      - aptitude
      - build-essential
      - gfortran
@@ -24,14 +26,19 @@
      - tree
      - autofs
 
-# - name: Install docker support (Ubuntu)
-#   when: 'common_install_docker'
-
-- name: "create {{ apps_path }} folder"
-  file:
-    path={{ item }}
-    state=directory
+- name: Install docker
+  command: "{{ item }}"
   with_items:
+    - "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -"
+    - "sudo add-apt-repository 'deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable'"
+    - "sudo apt-get update"
+    - "sudo apt-get install -y docker-ce"
+
+- name: "create bblab specific folders"
+  file:
+    path: {{ item }}
+    state: directory
+  loop:
     - "{{ apps_path }}"
     - "{{ apps_path }}/bin"
     - "/export/homes"

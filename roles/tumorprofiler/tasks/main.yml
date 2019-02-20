@@ -1,8 +1,3 @@
-- name: Ensure apt-daily is *not* running
-  script: |
-    no-update-on-reboot.sh
-  become: yes
-
 - name: add CRAN R repository
   command: apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
   become: yes
@@ -18,9 +13,10 @@
     state=present
 
 - name: Install required packages (Ubuntu)
-  apt: name={{ item }} state=present update_cache=yes
-  become: yes
-  with_items:
+  package:
+    name: {{ item }}
+    state: present
+    loop:
      - build-essential
      - gcc-7
      - g++-7
@@ -47,38 +43,17 @@
      - r-cran-nloptr
      - md5deep
      - hashdeep
+     - libudunits2-dev
 
-- name: Install docker
-  command: "{{ item }}"
-  with_items:
-    - "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -"
-    - "sudo add-apt-repository 'deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable'"
-    - "sudo apt-get update"
-    - "sudo apt-get install -y docker-ce"
-
-- name: allow ssh password
-  lineinfile: dest={{ item.dest }} regexp={{ item.regexp }} line={{ item.line }}
-  become: yes
-  with_items:
-    - { dest: '/etc/ssh/sshd_config', regexp: '^PasswordAuthentication no', line: 'PasswordAuthentication yes' }
-
-- name: create data folder
+- name: create TP folders
   file: path={{ data_path }} state=directory  
 
-- name: mount volume
-  mount: state=mounted src={{ mount_point }} path={{ data_path }} fstype=ext4
-
-- name: install Bioconductor
-  command: source("https://bioconductor.org/biocLite.R")
-
-- name: deploy bbRtools package
-  git:
-    repo='{{ bbRtools_git_repo }}'
-    dest={{ apps_path }}/bbRtools
-
-- name: install R packages
-  command: biocLie('{ item }')
-  with_items:
+- name: Install R packages using BioCondutor
+  command: Rscript –-vanilla -e "BiocManager::install(); if (! ('{{ item }}' %in% installed.packages()[,'Package'])) { BiocManager::install('{{item}}'); print('Added'); } else { print('Package {{item}} already installed'); }"
+  register: b_result
+  failed_when: “b_result.rc != 0 or ‘had non-zero exit status’ in b_result.stderr”
+  changed_when: "'Added' in b_result.stdout"
+  loop:
     - devtools
     - data.table
     - Rtsne
@@ -108,19 +83,45 @@
     - knitr
     - splatter
     - pheatmap
-    
+    - scales,
+    - RColorBrewer,
+    - MASS,
+    - Rtsne,
+    - kohonen,
+    - miscTools,
+    - gplots,
+    - Radviz,
+    - igraph,
+    - statmod,
+    - flowCore,
+    - cytofkit,
+    - ConsensusClusterPlus,
+    - cydar,
+    - flowCL,
+    - CATALYST,
+    - ncdfFlow,
+    - edgeR,
+    - MEM,
+    - cytofCore
+    - SingleCellExperiment
+
 - name: install tensorflow
-  command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "install.packages("tensorflow");tensorflow::install_tensorflow()')"
+  command: /usr/bin/Rscript --vanilla -e "install.packages("tensorflow");tensorflow::install_tensorflow()')"
+
+- name: deploy bbRtools package
+  git:
+    repo='{{ bbRtools_git_repo }}'
+    dest={{ apps_path }}/bbRtools
 
 - name: install bbRtools
-  command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "library(devtools);install_git('{{ apps_path }}/bbRtools/.git')"
-
-- name: install cellassign
-  command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "library(devtools);install_git('Irrationone/cellassign')"
+  command: /usr/bin/Rscript --vanilla -e "library(devtools);install_git('{{item}}')"
+  loop:
+   - '{{ apps_path }}/bbRtools/.git'
+   - 'Irrationone/cellassign'
 
 - name: Configure ssh-agent for local user
   file:
-    path: {{ bash_profile }}
-    dest: {{ ansible_env.HOME }}/.bash_profile
-    owner: {{ vm_login }}
-    become_user: {{ vm_login }}
+    path: {{bash_profile}}
+    dest: {{ansible_env.HOME}}/.bash_profile
+    owner: {{vm_login}}
+    become_user: {{vm_login}}
