@@ -4,7 +4,7 @@
 
 - name: Install required packages (Ubuntu)
   package:
-    name: {{ item }}
+    name: '{{item}}'
     state: present
     loop:
      - aptitude
@@ -27,20 +27,20 @@
      - autofs
 
 - name: Install docker
-  command: "{{ item }}"
+  command: '{{item}}'
   with_items:
     - "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -"
     - "sudo add-apt-repository 'deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable'"
     - "sudo apt-get update"
     - "sudo apt-get install -y docker-ce"
 
-- name: "create bblab specific folders"
+- name: create bblab specific folders
   file:
-    path: {{ item }}
+    path: '{{item}}'
     state: directory
   loop:
-    - "{{ apps_path }}"
-    - "{{ apps_path }}/bin"
+    - "{{apps_path}}"
+    - "{{apps_path}}/bin"
     - "/export/homes"
     - "/data"
 
@@ -54,14 +54,14 @@
 
 - name: configure local groups
   group:
-    name: '{{ item.gname }}'
-    gid: '{{ item.gid }}'
+    name: '{{item.gname}}'
+    gid: '{{item.gid}}'
     state: present
-  loop: '{{ gglist }}'
+  loop: '{{gglist}}'
 
 - name: configure local users
   user: name={{item.username}} password={{item.passwd}} generate_ssh_key=no groups={{item.groups}} shell=/bin/bash append=yes state=present uid={{item.uid}} create_home=yes home=/export/homes/{{item.username}}
-  loop: '{{ usrlist }}'
+  loop: '{{usrlist}}'
   
 - name: unlimit stack size
   pam_limits: domain='*' limit_type='-' limit_item=stack value=unlimited comment='unlimited stack size'
