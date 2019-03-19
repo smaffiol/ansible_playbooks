@@ -1,6 +1,6 @@
 - name: Add cran35 repo to apt list
   apt_repository:
-    repo="deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran35/"
+    repo="deb https://cloud.r-project.org/bin/linux/ubuntu {{ansible_lsb['codename']}}-cran35/"
     state=present
 
 - name: Add an apt key by id from a keyserver

@@ -44,6 +44,9 @@
      - md5deep
      - hashdeep
      - libudunits2-dev
+     - jupyter
+     - jupyter-nbconvert
+     - jupyter-nbextension-jupyter-js-widgets
 
 - name: create TP folders
   file: path={{ data_path }} state=directory  
@@ -104,6 +107,7 @@
     - MEM,
     - cytofCore
     - SingleCellExperiment
+    - scmap
 
 - name: install tensorflow
   command: /usr/bin/Rscript --vanilla -e "install.packages("tensorflow");tensorflow::install_tensorflow()')"
@@ -118,6 +122,7 @@
   loop:
    - '{{ apps_path }}/bbRtools/.git'
    - 'Irrationone/cellassign'
+   - 'DillonHammill/CytoRSuite'
 
 - name: Configure ssh-agent for local user
   file:
